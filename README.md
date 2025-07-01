@@ -25,6 +25,7 @@ forthcoming DDCL paper...
 - Tensorflow > v2
 - Essentia
 - TQDM
+- If you want to take advantage of GPU acceleration, make sure you have appropriate CUDNN and CUDA versions installed.
 
 ###  Installation
 
