@@ -1,6 +1,6 @@
 # DDCL
 
-Automatic chart generation for .sm files. See (the paper).
+Automatic chart generation for .sm files. See [DDCL](https://arxiv.org/abs/2507.01644).
 
 ---
 
@@ -14,7 +14,17 @@ We reuse a significant portion of code from [DDC](https://github.com/chrisdonahu
 
 If you use this code for research, please cite the following:
 
-forthcoming DDCL paper...
+```
+@misc{omalley2025dancedanceconvlstm,
+      title={Dance Dance ConvLSTM}, 
+      author={Miguel O'Malley},
+      year={2025},
+      eprint={2507.01644},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2507.01644}, 
+}
+```
 
 ---
 
