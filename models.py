@@ -55,6 +55,7 @@ def generatorify_from_fp_list_onset(dataset_fp_list,
                         chart_out = True
                 
                 newsong[0] = [make_onset_feature_context_range(feats, x[0], x[1]) for x in newsong[0]]
+                del(feats)
                 mean = np.mean(newsong[0], axis = 0)
                 std = np.std(newsong[0], axis = 0)
                 newsong[0] = (np.array(newsong[0])-mean)/std
@@ -173,7 +174,6 @@ def get_inputs_and_gens_onset(trn_fp,
                                          memlen = memlen,
                                               full_bidirectional = full_bidirectional,
                                               use_all_charts=use_all_charts)
-    num_out_labels = len(labels)
 
     audio_ctx_inp = Input(shape = inp_shape_0[1:], batch_size = batch_size)
     audio_ctx_inp2 = Input(shape = inp_shape_0[1:], batch_size = batch_size)

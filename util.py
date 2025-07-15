@@ -4,7 +4,6 @@ import numpy as np
 from essentia.standard import MonoLoader, FrameGenerator, Windowing, Spectrum, MelBands, RhythmExtractor2013
 import essentia.standard as es
 import math
-import matplotlib.pyplot as plt
 from typing import List, Tuple, Dict
 
 def set_bpm(audio_fp, min_tempo = 100, max_tempo = 200, maxstep = 12, bpm_method = 'DDCL'):
@@ -1121,34 +1120,3 @@ def pickle_box(fp):
     with open(fp, 'rb') as f:
         data = pickle.load(f)
     return data
-
-class MaskedCategoricalAccuracy(Metric):
-    def __init__(self, ignored_classes, name='masked_categorical_accuracy', **kwargs):
-        super(MaskedCategoricalAccuracy, self).__init__(name=name, **kwargs)
-        self.ignored_classes = tf.constant(ignored_classes, dtype=tf.int64)
-        self.total = self.add_weight(name="total", initializer="zeros")
-        self.count = self.add_weight(name="count", initializer="zeros")
-
-    def update_state(self, y_true, y_pred, sample_weight=None):
-        y_true_classes = tf.argmax(y_true, axis=-1)
-        y_pred_classes = tf.argmax(y_pred, axis=-1)
-
-        # Mask for ignored classes
-        mask = ~tf.reduce_any(tf.equal(tf.expand_dims(y_true_classes, -1), self.ignored_classes), axis=-1)
-
-        # Only count the accuracy for non-ignored classes
-        matches = tf.cast(tf.equal(y_true_classes, y_pred_classes), self.dtype)
-        matches = tf.boolean_mask(matches, mask)
-
-        num_matches = tf.reduce_sum(matches)
-        num_counted = tf.cast(tf.size(matches), self.dtype)
-
-        self.total.assign_add(num_matches)
-        self.count.assign_add(num_counted)
-
-    def result(self):
-        return tf.math.divide_no_nan(self.total, self.count)
-
-    def reset_states(self):
-        self.total.assign(0.0)
-        self.count.assign(0.0)
