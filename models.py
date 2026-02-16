@@ -654,6 +654,7 @@ def get_sym_model(audio_ctx_inp,
     ],
     )
     print(model.summary())
+    return model
 
 
 def train_sym_model(shuffle = True,
