@@ -1,6 +1,5 @@
 from models import *
 import argparse
-import os
 
 def get_parser():
     parser = argparse.ArgumentParser(description="Training Configuration")
@@ -60,4 +59,4 @@ if __name__ == "__main__":
                     test_txt_fp = args.test_txt_fp,
                     model_dir = args.model_dir,
                     load_checkpoint = args.load_checkpoint,
-                   use_diff = args.use_diff)
+                    use_diff = args.use_diff)

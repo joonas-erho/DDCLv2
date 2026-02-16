@@ -1,6 +1,5 @@
 from models import *
 import argparse
-import os
 
 def get_parser():
     parser = argparse.ArgumentParser(description="Training configuration for onset model")
@@ -75,7 +74,6 @@ if __name__ == "__main__":
     train_onset_model(stream_labels_fp=args.stream_labels_fp,
                         shuffle = args.shuffle,
                         batch_size = args.batch_size,
-                        classification_scheme = args.classification_scheme,
                         memlen = args.memlen,
                         mem_size = args.mem_size,
                         nframes = args.nframes,
@@ -90,6 +88,6 @@ if __name__ == "__main__":
                         full_bidirectional = args.full_bidirectional,
                         conv3d = args.conv3d,
                         model_name = args.model_name,
-                        use_full_chart = args.use_full_chart,
+                        use_all_charts = args.use_full_chart,
                         use_scheduler = args.use_scheduler,
                         use_early_stop = args.use_early_stop)
