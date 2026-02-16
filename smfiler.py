@@ -1,12 +1,10 @@
-import glob
 import logging as smlog
-import os
 import traceback
 from collections import OrderedDict, defaultdict
 import json
 json.encoder.FLOAT_REPR = lambda f: ('%.6f' % f)
-from util import ez_name, get_subdirs
 import random
+from pathlib import Path
 from abstime import calc_note_beats_and_abs_times
 from parse import parse_sm_txt
 import copy
@@ -22,6 +20,41 @@ import os
 import argparse
 import threading
 
+"""
+Find all .sm and .ssc files in given directory.
+"""
+def find_files(dir_name):
+    songpacks = {}
+
+    songpacks_directory = Path(dir_name)
+
+    for pack_folder in songpacks_directory.iterdir():
+        if not pack_folder.is_dir():
+            continue
+
+        sm_ssc_files = []
+
+        # iterate over subfolders (songs) inside this pack
+        for song_folder in pack_folder.iterdir():
+            if not song_folder.is_dir():
+                continue
+
+            # Note: *.ssc can be added here later once parsing
+            # .ssc files is supported. However, some packs introduce
+            # both .sm and .ssc files. In those cases, only one
+            # file should be read.
+            sm_ssc_files.extend(song_folder.glob('*.sm'))
+
+        # convert Path objects to strings
+        sm_ssc_files = [str(p) for p in sm_ssc_files]
+        songpacks[pack_folder.name] = sm_ssc_files
+
+    for pack_name, files in songpacks.items():
+        print("Successfully found files:")
+        print(f"{pack_name}: {len(files)} files")
+
+    return songpacks
+
 def extract_jsons(dir_name = 'songs',
                 style = 'stamina',
                 splits=[8,1,1],
@@ -32,31 +65,29 @@ def extract_jsons(dir_name = 'songs',
                 ):
     permutations= ['3120','0213','3210']
     _ATTR_REQUIRED = ['offset', 'bpms', 'notes']
-    substitutions={'M':'0', '4':'2'}
-    arrow_types = set(['0','1','2','3'])
+    substitutions = {'M':'0', '4':'2'}
+    arrow_types = {'0', '1', '2', '3'}
     packs_dir = 'raw/'+dir_name
     json_dir = 'json/'+dir_name
     pack_eznames = set()
-    pack_names = get_subdirs(packs_dir, False)
-    pack_dirs = [os.path.join(packs_dir, pack_name) for pack_name in pack_names]
-    pack_sm_globs = [os.path.join(pack_dir, '*', '*.sm') for pack_dir in pack_dirs]
-    if not os.path.isdir(json_dir):
-        os.makedirs(json_dir, exist_ok=True)
+
+    songpacks = find_files(packs_dir)
+
     split_fps = [[] for i in range(len(split_names))]
-    for pack_name, pack_sm_glob in zip(pack_names, pack_sm_globs):
-        pack_sm_fps = sorted(glob.glob(pack_sm_glob))
-        pack_ezname = ez_name(pack_name)
+    for key, pack in songpacks.items():
+        pack_name = key
+        pack_ezname = ez_name(key)
         if pack_ezname in pack_eznames:
             raise ValueError('Pack name conflict: {}'.format(pack_ezname))
         pack_eznames.add(pack_ezname)
 
-        if len(pack_sm_fps) > 0:
+        if len(pack) > 0:
             pack_outdir = os.path.join(json_dir, pack_ezname)
             if not os.path.isdir(pack_outdir):
                 os.mkdir(pack_outdir)
 
         sm_eznames = set()
-        for sm_fp in pack_sm_fps:
+        for sm_fp in pack:
             sm_name = os.path.split(os.path.split(sm_fp)[0])[1]
             sm_ezname = ez_name(sm_name)
             if sm_ezname in sm_eznames:
@@ -439,7 +470,7 @@ def extract_syms(dataset_fps = ['json/songs/songs_train.txt','json/songs/songs_t
                 if feats_dir:
                     song_feats_fp = os.path.join(feats_dir, '{}.pkl'.format(json_name))
 
-                sym_dicts = create_sym_dicts(meta, radius)
+                sym_dicts = create_sym_dicts(meta)
 
                 data = []
 
