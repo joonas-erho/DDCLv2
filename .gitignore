@@ -15,3 +15,4 @@
 /.venv/
 /raw/songs/
 /sym/
+__pycache__/
