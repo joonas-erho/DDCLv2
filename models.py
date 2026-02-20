@@ -786,9 +786,16 @@ def generate_charts(onset_model_fp='old_trained_models/onset_model.keras',
             song_title = os.path.splitext(os.path.basename(song_in))[0]
             beats, subdiv_beats, bpm_shift_times, offset, bpm_str, song_length, bpm = set_bpm(song_in, bpm_method=bpm_method)
             
-            topdiff = int(round((bpm/10)-(3-math.log(song_length,2))))
-            fine_diffs = {diffs[i]:topdiff - (4-i) for i in range(5)}
-            
+            expert_diff = int(round((bpm/10)-(3-math.log(song_length,2))))
+            if expert_diff > 14:
+                expert_diff = 14
+            novice_diff = 1
+            medium_diff = int((expert_diff + novice_diff) / 2)
+            easy_diff = int((novice_diff + medium_diff) / 2)
+            hard_diff = int((medium_diff + expert_diff) / 2)
+            diff_values = [novice_diff, easy_diff, medium_diff, hard_diff, expert_diff]
+            fine_diffs = {diffs[i]:diff_values[i] for i in range(5)}
+
             meta_reader = MetadataReader(filename=song_in)
             metadata = meta_reader()
             
