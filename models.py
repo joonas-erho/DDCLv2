@@ -403,7 +403,8 @@ def generatorify_from_fp_list_sym(dataset_fp_list,
                                  narrow_types = 4,
                                  use_diff = False,
                                  use_all_charts = False):
-    random.shuffle(dataset_fp_list)
+    if shuffle:
+        random.shuffle(dataset_fp_list)
     def _gener():
         k = 0
         song = [[]]
