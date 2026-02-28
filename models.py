@@ -285,7 +285,7 @@ def train_onset_model(stream_labels_fp='onset/songs/stream_labels.pkl',
                     nepochs = 300,
                     nmelbands = 80,
                     nchannels = 3,
-                    model_dir = 'old_trained_models',
+                    model_dir = 'trained_models',
                     train_txt_fp = 'onset/songs/songs_train.txt',
                     test_txt_fp = 'onset/songs/songs_test.txt',
                     load_checkpoint = False,
@@ -437,6 +437,11 @@ def generatorify_from_fp_list_sym(dataset_fp_list,
                     newsong = [[a[i] for a in chart] for i in range(3)]
                     if len(newsong[0]) == 0:
                         print('Dead reference: ' + dataset_fp_list[(k - 1) % (len(dataset_fp_list) - 1)-1])
+                        continue
+
+                    if any(isinstance(val, str) and len(val) > 4 for val in newsong[1]):
+                        print('Skipping song with invalid step data (string length > 4)')
+                        del (newsong)
                         continue
 
                     try: diff = chart[0][3]
@@ -672,7 +677,7 @@ def train_sym_model(shuffle = True,
                     n_predictions = 1,
                     train_txt_fp = 'sym/songs/songs_train.txt',
                     test_txt_fp = 'sym/songs/songs_test.txt',
-                    model_dir = 'old_trained_models',
+                    model_dir = 'trained_models',
                     model_name = 'sym',
                     load_checkpoint = True,
                    use_diff = False,

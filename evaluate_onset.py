@@ -35,7 +35,6 @@ def iter_fixed_onset_windows(
 ) -> Iterator[Tuple[Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray], np.ndarray]]:
     """
     Deterministically enumerate ALL onset windows in the test split.
-
     Yields:
       ((ac, ac2, sd, sd2), y) per sample (window), where
         ac, ac2: (memlen+1, nframes, nmelbands, nchannels)
